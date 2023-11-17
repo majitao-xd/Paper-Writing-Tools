@@ -47,8 +47,10 @@ class Ui_MainWindow(object):
         self.textEdit.setObjectName("textEdit")
         self.gridLayout.addWidget(self.textEdit, 0, 0, 1, 1)
         self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setPlaceholderText('拖入任意数量的SVG格式文件！\nDrag in any number of SVG format files!')
         self.textEdit_2.setObjectName("textEdit_2")
         self.gridLayout.addWidget(self.textEdit_2, 1, 0, 1, 1)
+        self.textEdit_2.setPlaceholderText('用于显示转换进度和转换后PDF格式文件的路径。\nDisplay the conversion progress and the path of the converted PDF file.')
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setObjectName("pushButton")
         self.gridLayout.addWidget(self.pushButton, 2, 0, 1, 1)
@@ -77,7 +79,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "SVG2PDF Tool alpha"))
-        self.pushButton.setText(_translate("MainWindow", "Trans."))
+        self.pushButton.setText(_translate("MainWindow", "转换 (Trans.)"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionSettings.setText(_translate("MainWindow", "Settings"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
@@ -87,15 +89,20 @@ class Ui_MainWindow(object):
 
     def svg2pdf(self):
         pdf_filename = ''
+        svg_count = 0
         for i, svg_file in enumerate(self.textEdit.svg_list):
-            root = os.path.dirname(svg_file)
-            pdf_file = root + '/' + os.path.basename(svg_file).replace('.svg', '.pdf')
-            pdf_filename += pdf_file + '\n'
-            renderPDF.drawToFile(svg2rlg(svg_file), pdf_file)
+            if '.svg' in os.path.basename(svg_file):
+                svg_count += 1
+                root = os.path.dirname(svg_file)
+                pdf_file = root + '/' + os.path.basename(svg_file).replace('.svg', '.pdf')
+                pdf_filename += pdf_file + '\n'
+                renderPDF.drawToFile(svg2rlg(svg_file), pdf_file)
             bar1 = '|' + '>' * (i+1) + '-' * (len(self.textEdit.svg_list)-i-1) + '|'
             self.textEdit_2.setText(bar1)
             QtWidgets.QApplication.processEvents()
-        self.textEdit_2.setText(pdf_filename + 'Done!')
+        word = '共输入{}个文件，其中{}个为SVG文件，共转换PDF文件{}个。\n'.format(len(self.textEdit.svg_list), svg_count, svg_count)
+        word_en = 'Input {} files, of which {} are SVG files and {} are converted PDF files.'.format(len(self.textEdit.svg_list), svg_count, svg_count)
+        self.textEdit_2.setText(pdf_filename + word + word_en)
 
 
 def show_win():
