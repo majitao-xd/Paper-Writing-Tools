@@ -4,6 +4,7 @@ import ctypes
 
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
+import cairosvg
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTextEdit
@@ -96,7 +97,8 @@ class Ui_MainWindow(object):
                 root = os.path.dirname(svg_file)
                 pdf_file = root + '/' + os.path.basename(svg_file).replace('.svg', '.pdf')
                 pdf_filename += pdf_file + '\n'
-                renderPDF.drawToFile(svg2rlg(svg_file), pdf_file)
+                # renderPDF.drawToFile(svg2rlg(svg_file), pdf_file)
+                cairosvg.svg2pdf(url=svg_file, write_to=pdf_file)
             bar1 = '|' + '>' * (i+1) + '-' * (len(self.textEdit.svg_list)-i-1) + '|'
             self.textEdit_2.setText(bar1)
             QtWidgets.QApplication.processEvents()
